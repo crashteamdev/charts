@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "stateless.fullname" . }}
+  labels:
+{{ include "stateless.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "stateless.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{ include "stateless.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+      {{- if or .Values.configMap .Values.secret }}
+        config/checksum: {{ include "stateless.configHash" . }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ template "stateless.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or .Values.extraInitContainers .Values.apiInitContainers.enabled }}
+      initContainers:
+    {{- if .Values.apiInitContainers.enabled }}
+        - name: fetch-keycloack-pubkey
+          image: {{ .Values.apiInitContainers.image | default "ghcr.io/valitydev/busybox:1.32" }}
+          env:
+          - name: TARGET
+            value: "/var/keycloak/keycloak.pubkey.pem"
+          {{- with .Values.apiInitContainers.env }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - /opt/keycloak/fetch-keycloak-pubkey.sh
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/keycloak/fetch-keycloak-pubkey.sh
+              subPath: fetchKeycloakPubkey
+              readOnly: true
+            - name: keycloak-pubkey
+              mountPath: /var/keycloak
+    {{- end }}
+    {{- with .Values.extrainitContainers }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      containers:
+        - name: {{ .Release.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{- with .Values.env }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          ports:
+          {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: TCP
+          {{- end }}
+        {{- if .Values.runopts.command }}
+          command: {{ .Values.runopts.command}}
+        {{- with .Values.runopts.args }}
+          args:
+            {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.livenessProbe }}
+          {{- if .Values.livenessProbe.httpGet }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.httpGet.path }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+            failureThreshold: 18
+            periodSeconds: 10
+          {{- end }}
+          livenessProbe:
+          {{- if .Values.livenessProbe.failureThreshold }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- else }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            failureThreshold: 6
+          {{- end }}
+        {{- end }}
+        {{- if .Values.readinessProbe }}
+          readinessProbe:
+          {{- if .Values.readinessProbe.failureThreshold }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- else }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            failureThreshold: 6
+          {{- end }}
+        {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+    {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}    
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
