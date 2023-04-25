@@ -3,6 +3,15 @@ entries:
   stateless:
   - apiVersion: v1
     appVersion: "1.0"
+    created: "2023-04-25T17:44:10.875527784Z"
+    description: A Helm chart for stateless marketdb services
+    digest: 68e6072b3156df06b0a8a8fd9a896385f6243506c39855a7ed587fd190335494
+    name: stateless
+    urls:
+    - https://github.com/crashteamdev/charts/releases/download/stateless-1.0.1/stateless-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v1
+    appVersion: "1.0"
     created: "2023-04-17T17:44:11.341719993Z"
     description: A Helm chart for stateless marketdb services
     digest: 85fdc6a2aba1acc8553909beaf9ea7df8d44aa95c13ab3d10dc88d9b6d43745d
@@ -10,4 +19,4 @@ entries:
     urls:
     - https://github.com/crashteamdev/charts/releases/download/stateless-1.0.0/stateless-1.0.0.tgz
     version: 1.0.0
-generated: "2023-04-17T17:44:11.341726294Z"
+generated: "2023-04-25T17:44:10.875534584Z"
