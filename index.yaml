@@ -19,4 +19,15 @@ entries:
     urls:
     - https://github.com/crashteamdev/charts/releases/download/stateless-1.0.0/stateless-1.0.0.tgz
     version: 1.0.0
-generated: "2023-04-25T17:44:10.875534584Z"
+  strapi-chart:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-06-18T16:14:05.324254049Z"
+    description: A Helm chart for Kubernetes
+    digest: 337f67f44d464e7504ab0b033cd6d44171def4d8e8621fb28da9477579ca75a1
+    name: strapi-chart
+    type: application
+    urls:
+    - https://github.com/crashteamdev/charts/releases/download/strapi-chart-0.1.0/strapi-chart-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-06-18T16:14:05.32425947Z"
