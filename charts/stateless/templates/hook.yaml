@@ -24,10 +24,17 @@ spec:
       containers:
         - name: {{ .Release.Name }}-init-job
           image: "{{ .Values.hook.image.repository }}:{{ .Values.hook.image.tag }}"
-          command: 
-          - /bin/bash
-          - -c
-          - {{ .Values.hook.command }}
+          {{- with .Values.hook.image.pullPolicy }}
+          imagePullPolicy: {{ . }}
+          {{- end }}
+          command:
+            - /bin/bash
+            - -c
+            - {{ .Values.hook.command | quote }}
+          {{- with .Values.hook.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.hook.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

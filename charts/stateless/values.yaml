@@ -78,6 +78,7 @@ hook:
     tag: stable
     pullPolicy: IfNotPresent
   command: []
+  env: []
   volumes: []
   volumeMounts: []
 
