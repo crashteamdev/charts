@@ -1,0 +1,10 @@
+# Default values for raw.
+# This is a YAML-formatted file.
+
+manifests: []
+# Render arbitrary Kubernetes manifests. Each item is templated with Helm `tpl`.
+# manifests:
+#   - apiVersion: v1
+#     kind: Service
+#     metadata:
+#       name: example
