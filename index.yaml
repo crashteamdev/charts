@@ -1,5 +1,15 @@
 apiVersion: v1
 entries:
+  raw:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2026-05-03T20:48:31.512242408Z"
+    description: A Helm chart for rendering raw Kubernetes manifests
+    digest: 074eee855dd39508016ae7a10dcf2b80cd0706721cd36d1335f8945f24f25600
+    name: raw
+    urls:
+    - https://github.com/crashteamdev/charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
+    version: 1.0.0
   stateless:
   - apiVersion: v1
     appVersion: "1.0"
@@ -49,4 +59,4 @@ entries:
     urls:
     - https://github.com/crashteamdev/charts/releases/download/strapi-chart-0.1.0/strapi-chart-0.1.0.tgz
     version: 0.1.0
-generated: "2026-03-03T13:46:27.286860203Z"
+generated: "2026-05-03T20:48:31.512255086Z"
